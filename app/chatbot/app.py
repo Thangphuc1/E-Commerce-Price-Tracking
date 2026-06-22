@@ -116,8 +116,7 @@ def latest_processed_csv():
         "Khong tim thay file laptop_price_compare_*.csv trong D:/Data/processed "
         "hoac data/output. Hay chay: python run_daily.py"
     )
-
-
+# lay file processed ke file moi nhat 
 def previous_processed_csv(current_csv_path=None):
     files = processed_csv_files()
     if not current_csv_path:
@@ -144,8 +143,7 @@ def previous_processed_csv(current_csv_path=None):
         "Khong tim thay file CSV ngay hom truoc de so sanh gia. "
         "Can it nhat 2 file laptop_price_compare_*.csv."
     )
-
-
+ # ham tien ich de xu ly loi neu ko co duong dan file
 def load_comparison_frame(csv_path=None):
     path = Path(csv_path) if csv_path else latest_processed_csv()
     if not path.exists():
@@ -159,8 +157,7 @@ def price_drop_percent(previous_price, current_price):
     if current_price >= previous_price:
         return None
     return (1 - current_price / previous_price) * 100
-
-
+# ham nay tao map dò dữ lieu cua san pham hien tai tu ngay hom truoc dua tren model_key cua san pham do
 def build_previous_row_map(df):
     rows = {}
     for _, row in df.iterrows():
@@ -169,7 +166,7 @@ def build_previous_row_map(df):
             rows[key] = row
     return rows
 
-
+#truy cap vao database 
 def load_favorite_product_keys():
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -180,9 +177,9 @@ def load_favorite_product_keys():
                 """
             )
             return {
-                product_key(model_key, brand)
+                product_key(model_key, brand)#goi ham product_key để chuẩn hóa dữ liệu
                 for model_key, brand in cur.fetchall()
-                if product_key(model_key, brand)[0]
+                if product_key(model_key, brand)[0] # Chỉ giữ lại những cặp có model_key không rỗng (phần tử thứ 0 của tuple)
             }
 
 

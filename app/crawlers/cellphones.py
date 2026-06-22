@@ -31,8 +31,9 @@ HEADERS = {
     ),
 }
 
-
+#tim id danh muc hang
 def get_category_id(category_url):
+    #gui request HTTP GET toi url danh muc
     response = requests.get(category_url, headers=HEADERS, timeout=30)
     response.raise_for_status()
 
@@ -45,7 +46,7 @@ def get_category_id(category_url):
 
     return match.group(1)
 
-
+#tao query de lay danh sach san pham
 def build_products_query(category_id, page):
     return f"""
     query products {{
@@ -75,7 +76,7 @@ def build_products_query(category_id, page):
     }}
     """
 
-
+#chuan hoa du lieu san pham
 def normalize_product(item, brand):
     general = item.get("general") or {}
     filterable = item.get("filterable") or {}
@@ -98,7 +99,7 @@ def normalize_product(item, brand):
         "crawled_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
 
-
+#lay toan bo san pham cua 1 hang
 def fetch_products(category_id, brand):
     products = []
     page = 1
@@ -139,7 +140,7 @@ def fetch_products(category_id, brand):
 
     return products
 
-
+#loai bo san pham trung lap
 def deduplicate_products(products):
     unique_products = {}
     for product in products:
@@ -148,12 +149,12 @@ def deduplicate_products(products):
             unique_products[key] = product
     return list(unique_products.values())
 
-
+#tao 1 file chua du lieu da cao
 def build_output_filename(brand, extension="csv"):
     date_str = datetime.now().strftime("%Y%m%d")
     return os.path.join(SAVE_DIR, f"cellphones_{brand}_laptop_{date_str}.{extension}")
 
-
+# luu danh sach san pham vao file csv
 def save_products(products, brand):
     os.makedirs(SAVE_DIR, exist_ok=True)
     df = pd.DataFrame(products)
@@ -175,7 +176,7 @@ def save_products(products, brand):
 
     return filename
 
-
+#ham chinh cao toan bo du lieu cua 1 hang
 def crawl_cellphones_laptops(brand):
     brand = brand.lower()
     if brand not in BRAND_CATEGORY_URLS:
@@ -188,7 +189,7 @@ def crawl_cellphones_laptops(brand):
     print(f"Đã lưu {len(products)} sản phẩm {brand.upper()} → {filename}")
     return filename
 
-
+# cao het tat ca hang duoc ho tro
 def crawl_all_supported_brands():
     output_files = []
     for brand in BRAND_CATEGORY_URLS:
